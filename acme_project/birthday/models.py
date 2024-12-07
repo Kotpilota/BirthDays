@@ -7,6 +7,17 @@ from .validators import real_age
 User = get_user_model()
 
 
+class Tag(models.Model):
+    tag = models.CharField('Тег', max_length=20)
+
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = "Теги"
+
+    def __str__(self):
+        return self.tag
+
+
 class Birthday(models.Model):
     first_name = models.CharField('Имя', max_length=20)
     last_name = models.CharField(
@@ -17,6 +28,12 @@ class Birthday(models.Model):
         User, on_delete=models.CASCADE, null=True
     )
     image = models.ImageField('Фото', upload_to='birthdays_images', blank=True)
+    tags = models.ManyToManyField(
+        Tag,
+        verbose_name='Теги',
+        blank=True,
+        help_text='Удерживайте Ctrl для выбора нескольких вариантов'
+    )
 
     class Meta:
         constraints = (
@@ -26,6 +43,7 @@ class Birthday(models.Model):
             ),
         )
         verbose_name = 'День рождения'
+        verbose_name_plural = 'Дни рождения'
 
     def get_absolute_url(self):
         return reverse('birthday:detail', kwargs={'pk': self.pk})
